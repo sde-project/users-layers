@@ -24,7 +24,10 @@ connect(process.env.MONGO_DB).then(() => {
 
     app.use((req, res, next) => {
         if(req.headers.authorization !== process.env.DB_API_KEY) {
-            return res.status(401).send({error: "401 Unauthorized"})
+            return res.status(401).send({
+                statusCode: 401,
+                message: "Unauthorized"
+            });
         } else {
             next();
         }
@@ -32,7 +35,10 @@ connect(process.env.MONGO_DB).then(() => {
     
     app.use("/users", auth);
     app.use((req, res) => {
-        return res.status(404).send({error: "API not found."});
+        return res.status(404).send({
+            statusCode: 404,
+            message: "API not found."
+        });
     });
 
     app.listen(8000, () => {

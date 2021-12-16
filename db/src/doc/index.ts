@@ -31,7 +31,10 @@ export default {
             GeneralError: {
                 type: "object",
                 properties: {
-                    error: {
+                    statusCode: {
+                        type: "number"
+                    },
+                    message: {
                         type: "string"
                     }
                 }
@@ -104,6 +107,16 @@ export default {
             },
             IllegalInput: {
                 description: "Illegal input for operation.",
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/GeneralError"
+                        }
+                    }
+                }
+            },
+            Unauthorized: {
+                description: "Request was not authorized.",
                 content: {
                     "application/json": {
                         schema: {

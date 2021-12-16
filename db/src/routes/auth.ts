@@ -12,8 +12,9 @@ router.get("/all", async (req, res) => {
         res.send(users);
     } catch(e) {
         console.error(e);
-        res.status(400).send({
-            error: "There was an error communicating with the db",
+        res.status(500).send({
+            statusCode: 500,
+            message: "There was an error communicating with the db",
             exception: e
         });
     }
@@ -26,13 +27,15 @@ router.get("/id/:id", async (req, res) => {
             res.send(user);
         } else {
             res.status(404).send({
-                error: "Not found"
+                statusCode: 404,
+                message: "Not found"
             });
         }
     } catch(e) {
         console.error(e);
-        res.status(400).send({
-            error: "There was an error communicating with the db",
+        res.status(500).send({
+            statusCode: 500,
+            message: "There was an error communicating with the db",
             exception: e
         });
     }
@@ -45,13 +48,15 @@ router.get("/email/:email", async (req, res) => {
             res.send(user);
         } else {
             res.status(404).send({
-                error: "Not found"
+                statusCode: 404,
+                message: "Not found"
             });
         }
     } catch(e) {
         console.error(e);
-        res.status(400).send({
-            error: "There was an error communicating with the db",
+        res.status(500).send({
+            statusCode: 500,
+            message: "There was an error communicating with the db",
             exception: e
         });
     }
@@ -83,8 +88,9 @@ router.post("/",
             res.send(user_db);
         } catch(e) {
             console.error(e);
-            res.status(400).send({
-                error: "There was an error communicating with the db",
+            res.status(500).send({
+                statusCode: 500,
+                message: "There was an error communicating with the db",
                 exception: e
             });
         }
@@ -113,8 +119,9 @@ router.put("/id/:id",
             res.send(updated);
         } catch(e) {
             console.error(e);
-            res.status(400).send({
-                error: "There was an error communicating with the db",
+            res.status(500).send({
+                statusCode: 500,
+                message: "There was an error communicating with the db",
                 exception: e
             });
         }
@@ -135,8 +142,9 @@ router.delete("/id/:id", async (req, res) => {
         res.sendStatus(200);
     } catch (e) {
         console.error(e);
-        res.status(400).send({
-            error: "There was an error communicating with the db",
+        res.status(500).send({
+            statusCode: 500,
+            message: "There was an error communicating with the db",
             exception: e
         });
     }

@@ -34,6 +34,26 @@ export default {
                         }
                     }
                 },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
             },
         },
     },
@@ -57,6 +77,26 @@ export default {
                 },
                 400: {
                     description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
                     content: {
                         "application/json": {
                             schema: {
@@ -94,6 +134,36 @@ export default {
                 },
                 400: {
                     description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
                     content: {
                         "application/json": {
                             schema: {
@@ -146,6 +216,36 @@ export default {
                         }
                     }
                 },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
             },
         },
         delete: {
@@ -166,6 +266,36 @@ export default {
                 },
                 400: {
                     description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
                     content: {
                         "application/json": {
                             schema: {
@@ -203,6 +333,36 @@ export default {
                 },
                 400: {
                     description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
                     content: {
                         "application/json": {
                             schema: {
