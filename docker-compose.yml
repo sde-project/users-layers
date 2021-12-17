@@ -9,3 +9,7 @@ services:
     build: ./auth
     ports:
       - 8000:8000
+  business-logic:
+    build: ./business-logic
+    ports:
+      - 8002:8000

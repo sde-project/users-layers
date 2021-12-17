@@ -1,25 +1,25 @@
 export default {
-    "/profiles": {
+    "/users": {
         post: {
-            tags: ["Profiles"],
-            description: "Create auth object",
+            tags: ["Users"],
+            description: "Create user",
             parameters: [],
             requestBody: {
                 content: {
                     "application/json": {
                         schema: {
-                            $ref: "#/components/schemas/ProfileCreation",
+                            $ref: "#/components/schemas/UserInput",
                         },
                     },
                 },
             },
             responses: {
                 200: {
-                    description: "Auth object created succesfully",
+                    description: "User created succesfully",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/ProfileObject"
+                                $ref: "#/components/schemas/UserOutput"
                             }
                         }
                     }
@@ -57,19 +57,28 @@ export default {
             },
         },
     },
-    '/profiles/all': {
+    '/users/fromUsername/{username}': {
         get: {
-            tags: ["Profiles"],
-            description: "Get all profiles",
+            tags: ["Users"],
+            description: "Get users from (part of) username",
+            parameters: [
+                {
+                    name: "username",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
             responses: {
                 200: {
-                    description: "The profiles",
+                    description: "The users",
                     content: {
                         "application/json": {
                             schema: {
                                 type: "array",
                                 items: {
-                                    $ref: "#/components/schemas/ProfileObject"
+                                    $ref: "#/components/schemas/UserOutput"
                                 }
                             }
                         }
@@ -108,10 +117,70 @@ export default {
             },
         },
     },
-    '/profiles/id/{id}': {
+    '/users/fromCrypto/{crypto}': {
         get: {
-            tags: ["Profiles"],
-            description: "Get a profile from its id",
+            tags: ["Users"],
+            description: "Get users that follow a particular crypto",
+            parameters: [
+                {
+                    name: "crypto",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The users",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "array",
+                                items: {
+                                    $ref: "#/components/schemas/UserOutput"
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
+    '/users/id/{id}': {
+        get: {
+            tags: ["Users"],
+            description: "Get a user from its id",
             parameters: [
                 {
                     name: "id",
@@ -123,11 +192,11 @@ export default {
             ],
             responses: {
                 200: {
-                    description: "The profile",
+                    description: "The user",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/ProfileObject"
+                                $ref: "#/components/schemas/UserOutput"
                             }
                         }
                     }
@@ -175,8 +244,8 @@ export default {
             },
         },
         put: {
-            tags: ["Profiles"],
-            description: "Edit profile",
+            tags: ["Users"],
+            description: "Edit user data",
             parameters: [
                 {
                     name: "id",
@@ -190,18 +259,18 @@ export default {
                 content: {
                     "application/json": {
                         schema: {
-                            $ref: "#/components/schemas/ProfileInput",
+                            $ref: "#/components/schemas/EditUserInput",
                         },
                     },
                 },
             },
             responses: {
                 200: {
-                    description: "Auth object modified succesfully",
+                    description: "User edited succesfully",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/ProfileObject"
+                                $ref: "#/components/schemas/AuthObject"
                             }
                         }
                     }
@@ -249,8 +318,8 @@ export default {
             },
         },
         delete: {
-            tags: ["Profiles"],
-            description: "Delete a profile",
+            tags: ["Users"],
+            description: "Delete a user",
             parameters: [
                 {
                     name: "id",
@@ -262,7 +331,7 @@ export default {
             ],
             responses: {
                 200: {
-                    description: "Profile deleted succesfully",
+                    description: "User deleted succesfully",
                 },
                 400: {
                     description: "Parameters error",
@@ -307,124 +376,5 @@ export default {
             },
         },
     },
-    '/profiles/username/{username}': {
-        get: {
-            tags: ["Profiles"],
-            description: "Get profiles from (part of) his username",
-            parameters: [
-                {
-                    name: "username",
-                    in: "path",
-                    schema: {
-                        type: "string"
-                    }
-                }
-            ],
-            responses: {
-                200: {
-                    description: "The profiles",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                type: "array",
-                                items: {
-                                    $ref: "#/components/schemas/ProfileObject"
-                                }
-                            }
-                        }
-                    }
-                },
-                400: {
-                    description: "Parameters error",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                401: {
-                    description: "Unauthorized",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                500: {
-                    description: "General Error",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-            },
-        },
-    },
-    '/profiles/crypto/{crypto}': {
-        get: {
-            tags: ["Profiles"],
-            description: "Get profiles from his crypto",
-            parameters: [
-                {
-                    name: "crypto",
-                    in: "path",
-                    schema: {
-                        type: "string"
-                    }
-                }
-            ],
-            responses: {
-                200: {
-                    description: "The profiles",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                type: "array",
-                                items: {
-                                    $ref: "#/components/schemas/ProfileObject"
-                                },
-                            },
-                        },
-                    },
-                },
-                400: {
-                    description: "Parameters error",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                401: {
-                    description: "Unauthorized",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                500: {
-                    description: "General Error",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-            }
-        },
-    }
+    //TODO: FOLLOWS API CALLS
 }

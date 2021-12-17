@@ -2,10 +2,17 @@ import * as mongoose from "mongoose";
 
 export interface Profile {
     _id?: string,
-    user: string,
-    username: string,
+    user?: string,
+    username?: string,
     name?: string,
-    //others...
+    bio?: string,
+    links?: Array<{
+        website?: string,
+        text?: string,
+    }>,
+    cryptos?: Array<string>,
+    following?: Array<string>,
+    public?: boolean,
 }
 
 const ProfileSchema = new mongoose.Schema({
@@ -20,7 +27,18 @@ const ProfileSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    name: String
+    name: String,
+    bio: String,
+    links: [{
+        website: String,
+        text: String
+    }],
+    cryptos: [String],
+    following: [mongoose.Schema.Types.ObjectId],
+    public: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const ProfileModel = mongoose.model<Profile>("Profile", ProfileSchema);

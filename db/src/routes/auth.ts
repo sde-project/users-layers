@@ -133,10 +133,11 @@ router.delete("/id/:id", async (req, res) => {
     try {
         const user_db = await UserAuthModel.findByIdAndDelete(req.params.id);
         if(user_db) {
-            await Promise.all([
-                ProfileModel.findOneAndDelete({user: user_db._id}),
-                DeviceModel.deleteMany({user: user_db._id})
-            ]);
+            const profile = await ProfileModel.findOneAndDelete({user: user_db._id});
+            await DeviceModel.deleteMany({user: user_db._id});
+            if(profile) {
+                await ProfileModel.updateMany({following: profile._id}, {$pull: {following: profile._id}});
+            }
         }
 
         res.sendStatus(200);

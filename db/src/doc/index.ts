@@ -16,7 +16,7 @@ export default {
     },
     servers: [
         {
-            url: "http://localhost:8000/",
+            url: "http://localhost:8001/",
             description: "Local server",
         }
     ],
@@ -90,6 +90,144 @@ export default {
                     salt: {
                         type: "string"
                     }
+                }
+            },
+
+            ProfileObject: {
+                type: "object",
+                properties: {
+                    _id: {
+                        type: "string",
+                    },
+                    user: {
+                        type: "string",
+                    },
+                    username: {
+                        type: "string",
+                    },
+                    name: {
+                        type: "string",
+                    },
+                    bio: {
+                        type: "string",
+                    },
+                    links: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                website: {
+                                    type: "string",
+                                },
+                                text: {
+                                    type: "string",
+                                }
+                            }
+                        }
+                    },
+                    cryptos: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    following: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    public: {
+                        type: "boolean",
+                    },
+                }
+            },
+
+            ProfileCreation: {
+                type: "object",
+                properties: {
+                    user: {
+                        type: "string",
+                    },
+                    username: {
+                        type: "string",
+                    },
+                    name: {
+                        type: "string",
+                    },
+                    bio: {
+                        type: "string",
+                    },
+                    links: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                website: {
+                                    type: "string",
+                                },
+                                text: {
+                                    type: "string",
+                                }
+                            }
+                        }
+                    },
+                    cryptos: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    following: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    public: {
+                        type: "boolean",
+                    },
+                }
+            },
+
+            ProfileInput: {
+                type: "object",
+                properties: {
+                    name: {
+                        type: "string",
+                    },
+                    bio: {
+                        type: "string",
+                    },
+                    links: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                website: {
+                                    type: "string",
+                                },
+                                text: {
+                                    type: "string",
+                                }
+                            }
+                        }
+                    },
+                    cryptos: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    following: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    public: {
+                        type: "boolean",
+                    },
                 }
             },
         },
