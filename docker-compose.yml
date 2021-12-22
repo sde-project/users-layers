@@ -5,10 +5,10 @@ services:
     build: ./db
     ports:
       - 8001:8000
-  auth:
-    build: ./auth
-    ports:
-      - 8000:8000
+  # auth:
+  #   build: ./auth
+  #   ports:
+  #     - 8000:8000
   business-logic:
     build: ./business-logic
     ports:

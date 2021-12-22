@@ -69,7 +69,11 @@ router.get("/username/:username",
         const validator_result = validationResult(req);
 
         if(!validator_result.isEmpty()) {
-            return res.status(400).send({errors: validator_result.array()});
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
         }
 
         try {
@@ -98,7 +102,11 @@ router.get("/crypto/:crypto",
         const validator_result = validationResult(req);
 
         if(!validator_result.isEmpty()) {
-            return res.status(400).send({errors: validator_result.array()});
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
         }
 
         try {
@@ -123,7 +131,11 @@ router.post("/",
         const validator_result = validationResult(req);
 
         if(!validator_result.isEmpty()) {
-            return res.status(400).send({errors: validator_result.array()});
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
         }
 
         try {
@@ -168,33 +180,33 @@ router.put("/id/:id",
 
             let editObj:Profile = {};
             
-            if(req.body.name) {
+            if(req.body.name !== undefined) {
                 editObj.name = req.body.name;
             }
 
-            if(req.body.bio) {
+            if(req.body.bio !== undefined) {
                 editObj.bio = req.body.bio;
             }
 
-            if(req.body.links) {
+            if(req.body.links !== undefined) {
                 editObj.links = req.body.links;
             }
 
-            if(req.body.public) {
+            if(req.body.public !== undefined) {
                 editObj.public = req.body.public;
             }
 
-            if(req.body.cryptos) {
+            if(req.body.cryptos !== undefined) {
                 editObj.cryptos = req.body.cryptos;
             }
 
-            if(req.body.following) {
+            if(req.body.following !== undefined) {
                 editObj.following = req.body.following;
             }
 
             const profile_db = await ProfileModel.findByIdAndUpdate(req.params.id, {$set: editObj});
             const updated = await ProfileModel.findById(profile_db?._id);
-            
+
             res.send(updated);
         } catch(e) {
             console.error(e);

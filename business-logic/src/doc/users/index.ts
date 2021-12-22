@@ -433,6 +433,242 @@ export default {
                 },
             },
         },
+    },
+    '/users/id/{id}/following': {
+        get: {
+            tags: ["Users"],
+            description: "Get the users that the user is following",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The list of users",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "array",
+                                items: {
+                                    $ref: "#/components/schemas/UserOutput"
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+        put: {
+            tags: ["Users"],
+            description: "Add a user to the list of users that the user is following",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                id: {
+                                    type: "string",
+                                }
+                            }
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Operation succesful",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/AuthObject"
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
+    '/users/id/{id}/followers': {
+        get: {
+            tags: ["Users"],
+            description: "Get the users that the user is following",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The list of users",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "array",
+                                items: {
+                                    $ref: "#/components/schemas/UserOutput"
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
     }
-    //TODO: FOLLOWS API CALLS
 }

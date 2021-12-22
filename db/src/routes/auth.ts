@@ -72,7 +72,11 @@ router.post("/",
         const validator_result = validationResult(req);
 
         if(!validator_result.isEmpty()) {
-            return res.status(400).send({errors: validator_result.array()});
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
         }
 
         try {
@@ -106,7 +110,11 @@ router.put("/id/:id",
         const validator_result = validationResult(req);
 
         if(!validator_result.isEmpty()) {
-            return res.status(400).send({errors: validator_result.array()});
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
         }
 
         try {
