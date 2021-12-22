@@ -26,7 +26,7 @@ connect(process.env.MONGO_DB).then(() => {
     app.use('/api-docs', swagger.serve, swagger.setup(docs));
 
     app.use((req, res, next) => {
-        if(req.headers.authorization !== process.env.DB_API_KEY) {
+        if(req.headers['api-key'] !== process.env.DB_API_KEY) {
             return res.status(401).send({
                 statusCode: 401,
                 message: "Unauthorized"

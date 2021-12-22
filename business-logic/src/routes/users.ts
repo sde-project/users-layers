@@ -1,77 +1,74 @@
 import { default as express } from "express";
-import { body, validationResult } from "express-validator";
+import { body, validationResult, param } from "express-validator";
 import { AxiosRequestConfig, default as axios } from "axios";
 import { default as bcrypt } from "bcrypt";
 import assert from "assert";
+import { default as jwt } from "jsonwebtoken";
+import { Profile } from "../models/profile.model";
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: any
+        }
+    }
+}
 
 const router = express.Router();
 
 assert(process.env.DB_API_KEY, "DB_API_KEY not found in .env file!");
+assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
 
 const axiosConfig:AxiosRequestConfig<any> = {
     headers: {
-        "Authorization": process.env.DB_API_KEY
+        "api-key": process.env.DB_API_KEY
     },
     validateStatus: (_) => {
         return true;
     }
 }
 
-// router.get("/all", async (req, res) => {
-//     try {
-//         const users = await UserAuthModel.find();
-//         res.send(users);
-//     } catch(e) {
-//         console.error(e);
-//         res.status(500).send({
-//             statusCode: 500,
-//             message: "There was an error communicating with the db",
-//             exception: e
-//         });
-//     }
-// });
+router.post("/login",
+    body("email").isEmail().normalizeEmail(),
+    body("password").isString(),
+    async (req, res) => {
+        const validator_result = validationResult(req);
 
-// router.get("/id/:id", async (req, res) => {
-//     try {
-//         const user = await UserAuthModel.findById(req.params.id);
-//         if(user) {
-//             res.send(user);
-//         } else {
-//             res.status(404).send({
-//                 statusCode: 404,
-//                 message: "Not found"
-//             });
-//         }
-//     } catch(e) {
-//         console.error(e);
-//         res.status(500).send({
-//             statusCode: 500,
-//             message: "There was an error communicating with the db",
-//             exception: e
-//         });
-//     }
-// });
+        if(!validator_result.isEmpty()) {
+            return res.status(400).send({errors: validator_result.array()});
+        }
 
-// router.get("/email/:email", async (req, res) => {
-//     try {
-//         const user = await UserAuthModel.findOne({email: req.params.email});
-//         if(user) {
-//             res.send(user);
-//         } else {
-//             res.status(404).send({
-//                 statusCode: 404,
-//                 message: "Not found"
-//             });
-//         }
-//     } catch(e) {
-//         console.error(e);
-//         res.status(500).send({
-//             statusCode: 500,
-//             message: "There was an error communicating with the db",
-//             exception: e
-//         });
-//     }
-// });
+        const response = await axios.get("http://db:8000/users/email/" + req.body.email, axiosConfig);
+
+        if(response.status !== 200) {
+            return res.status(400).send({
+                statusCode: 400,
+                message: "Invalid email or password"
+            });
+        }
+
+        const user = response.data;
+        const is_match = await bcrypt.compare(req.body.password, user.password);
+
+        if(!is_match) {
+            return res.status(400).send({
+                statusCode: 400,
+                message: "Invalid email or password"
+            });
+        }
+
+        assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
+
+        const token = jwt.sign({
+            _id: user._id,
+            email: user.email
+        }, process.env.JWT_SECRET);
+
+        return res.send({
+            token: token
+        });
+    }
+);
 
 router.post("/",
     body("email").exists().isEmail(),
@@ -148,56 +145,149 @@ router.post("/",
     }
 );
 
-// router.put("/id/:id", 
-//     body("password").exists(),
-//     body("salt").exists(),
-//     async (req, res) => {
+router.use(async (req, res, next) => {
+    if(req.headers.authorization) {
+        const token = req.headers.authorization.split(" ")[1];
+        assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+            if(err) {
+                return res.status(401).send({
+                    statusCode: 401,
+                    message: "Invalid token"
+                });
+            }
+            req.user = decoded;
 
-//         const validator_result = validationResult(req);
+            //Gets profile id
+            const profile = await axios.get("http://db:8000/profiles/userid/" + req.user._id, axiosConfig);
+            if(profile.status == 200) {
+                req.user.profile = profile.data._id;
+            }
 
-//         if(!validator_result.isEmpty()) {
-//             return res.status(400).send({errors: validator_result.array()});
-//         }
+            next();
+        });
+    } else {
+        return res.status(401).send({
+            statusCode: 401,
+            message: "No token provided"
+        });
+    }
+});
 
-//         try {
-//             const user_db = await UserAuthModel.findByIdAndUpdate(req.params?.id, {$set: {
-//                 password: req.body.password,
-//                 salt: req.body.salt
-//             }});
+router.put("/id/:id", async (req, res) => {
 
-//             const updated = await UserAuthModel.findById(user_db?._id);
-//             res.send(updated);
-//         } catch(e) {
-//             console.error(e);
-//             res.status(500).send({
-//                 statusCode: 500,
-//                 message: "There was an error communicating with the db",
-//                 exception: e
-//             });
-//         }
+    if(req.user._id != req.params.id) {
+        return res.status(401).send({
+            statusCode: 401,
+            message: "You are not authorized to perform this action"
+        });
+    }
 
-//     }
-// );
+    let editObj:Profile = {};
+            
+    if(req.body.name) {
+        editObj.name = req.body.name;
+    }
 
-// router.delete("/id/:id", async (req, res) => {
-//     try {
-//         const user_db = await UserAuthModel.findByIdAndDelete(req.params.id);
-//         if(user_db) {
-//             await Promise.all([
-//                 ProfileModel.findOneAndDelete({user: user_db._id}),
-//                 DeviceModel.deleteMany({user: user_db._id})
-//             ]);
-//         }
+    if(req.body.bio) {
+        editObj.bio = req.body.bio;
+    }
 
-//         res.sendStatus(200);
-//     } catch (e) {
-//         console.error(e);
-//         res.status(500).send({
-//             statusCode: 500,
-//             message: "There was an error communicating with the db",
-//             exception: e
-//         });
-//     }
-// });
+    if(req.body.links) {
+        editObj.links = req.body.links;
+    }
+
+    if(req.body.public) {
+        editObj.public = req.body.public;
+    }
+
+    if(req.body.cryptos) {
+        editObj.cryptos = req.body.cryptos;
+    }
+
+    if(req.body.following) {
+        editObj.following = req.body.following;
+    }
+
+    const response = await axios.put("http://db:8000/profiles/id/" + req.user.profile, editObj, axiosConfig);
+
+    if(response.status != 200) {
+        return res.status(response.status).send(response.data);
+    }
+
+    return res.send(response.data);
+
+});
+
+router.get("/id/:id", async (req, res) => {
+    
+    const profile = await axios.get("http://db:8000/profiles/userid/" + req.params.id, axiosConfig);
+
+    if(profile.status != 200) {
+        return res.status(profile.status).send(profile.data);
+    }
+
+    if(profile.data.public == false && req.user._id != req.params.id) {
+        return res.status(401).send({
+            statusCode: 401,
+            message: "You are not authorized to perform this action"
+        });
+    }
+
+    return res.send(profile.data);
+
+});
+
+router.get("/me", async (req, res) => {
+    
+    const profile = await axios.get("http://db:8000/profiles/userid/" + req.user._id, axiosConfig);
+
+    if(profile.status != 200) {
+        return res.status(profile.status).send(profile.data);
+    }
+
+    return res.send(profile.data);
+
+});
+
+router.get("/fromUsername/:username", 
+    param("username").isString(),
+    async (req, res) => {
+
+        const validator_result = validationResult(req);
+
+        if(!validator_result.isEmpty()) {
+            return res.status(400).send({errors: validator_result.array()});
+        }
+
+        const profiles = await axios.get("http://db:8000/profiles/username/" + req.params?.username, axiosConfig);
+        
+        if(profiles.status !== 200) {
+            return res.status(profiles.status).send(profiles.data);
+        }
+
+        return res.send(profiles.data.filter((profile:Profile) => profile.public));
+    }
+);
+
+router.get("/fromCrypto/:crypto", 
+    param("crypto").isString(),
+    async (req, res) => {
+
+        const validator_result = validationResult(req);
+
+        if(!validator_result.isEmpty()) {
+            return res.status(400).send({errors: validator_result.array()});
+        }
+
+        const profiles = await axios.get("http://db:8000/profiles/crypto/" + req.params?.crypto, axiosConfig);
+        
+        if(profiles.status !== 200) {
+            return res.status(profiles.status).send(profiles.data);
+        }
+
+        return res.send(profiles.data.filter((profile:Profile) => profile.public));
+    }
+);
 
 export default router;

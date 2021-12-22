@@ -278,7 +278,7 @@ export default {
         securitySchemes: {
             api_key: {
                 type: "apiKey",
-                name: "Authorization",
+                name: "api-key",
                 in: "header"
             },
         }

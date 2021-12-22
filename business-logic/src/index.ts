@@ -20,7 +20,7 @@ app.use(cors());
 app.use('/api-docs', swagger.serve, swagger.setup(docs));
 
 app.use((req, res, next) => {
-    if(req.headers.authorization !== process.env.BUSINESS_LOGIC_API_KEY) {
+    if(req.headers["api-key"] !== process.env.BUSINESS_LOGIC_API_KEY) {
         return res.status(401).send({
             statusCode: 401,
             message: "Unauthorized"

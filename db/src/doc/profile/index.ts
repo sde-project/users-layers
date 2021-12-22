@@ -367,6 +367,63 @@ export default {
             },
         },
     },
+    '/profiles/userid/{id}': {
+        get: {
+            tags: ["Profiles"],
+            description: "Get profiles from its user id",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The profile",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/ProfileObject"
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
     '/profiles/crypto/{crypto}': {
         get: {
             tags: ["Profiles"],

@@ -1,4 +1,52 @@
 export default {
+    "/users/login": {
+        post: {
+            tags: ["Users"],
+            description: "Login a user",
+            parameters: [],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/LoginInput",
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Login was successfull",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/LoginOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
     "/users": {
         post: {
             tags: ["Users"],
@@ -61,6 +109,12 @@ export default {
         get: {
             tags: ["Users"],
             description: "Get users from (part of) username",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
             parameters: [
                 {
                     name: "username",
@@ -121,6 +175,12 @@ export default {
         get: {
             tags: ["Users"],
             description: "Get users that follow a particular crypto",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
             parameters: [
                 {
                     name: "crypto",
@@ -181,6 +241,12 @@ export default {
         get: {
             tags: ["Users"],
             description: "Get a user from its id",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
             parameters: [
                 {
                     name: "id",
@@ -246,6 +312,12 @@ export default {
         put: {
             tags: ["Users"],
             description: "Edit user data",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
             parameters: [
                 {
                     name: "id",
@@ -317,44 +389,30 @@ export default {
                 },
             },
         },
-        delete: {
+    },
+    '/users/me': {
+        get: {
             tags: ["Users"],
-            description: "Delete a user",
-            parameters: [
+            description: "Get data about the logged user",
+            security: [
                 {
-                    name: "id",
-                    in: "path",
-                    schema: {
-                        type: "string"
-                    }
+                    api_key: [],
+                    token: [],
                 }
             ],
             responses: {
                 200: {
-                    description: "User deleted succesfully",
-                },
-                400: {
-                    description: "Parameters error",
+                    description: "The user",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/GeneralError"
+                                $ref: "#/components/schemas/UserOutput"
                             }
                         }
                     }
                 },
                 401: {
                     description: "Unauthorized",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                404: {
-                    description: "Not found",
                     content: {
                         "application/json": {
                             schema: {
@@ -375,6 +433,6 @@ export default {
                 },
             },
         },
-    },
+    }
     //TODO: FOLLOWS API CALLS
 }

@@ -41,6 +41,27 @@ router.get("/id/:id", async (req, res) => {
     }
 });
 
+router.get("/userid/:id", async (req, res) => {
+    try {
+        const profile = await ProfileModel.findOne({ user: req.params.id });
+        if(profile) {
+            res.send(profile);
+        } else {
+            res.status(404).send({
+                statusCode: 404,
+                message: "Not found"
+            });
+        }
+    } catch(e) {
+        console.error(e);
+        res.status(500).send({
+            statusCode: 500,
+            message: "There was an error communicating with the db",
+            exception: e
+        });
+    }
+});
+
 router.get("/username/:username", 
     param("username").isString(),
     async (req, res) => {
@@ -173,6 +194,7 @@ router.put("/id/:id",
 
             const profile_db = await ProfileModel.findByIdAndUpdate(req.params.id, {$set: editObj});
             const updated = await ProfileModel.findById(profile_db?._id);
+            
             res.send(updated);
         } catch(e) {
             console.error(e);

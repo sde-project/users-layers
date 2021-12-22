@@ -74,16 +74,62 @@ export default {
             EditUserInput: {
                 type: "object",
                 properties: {
-                    username: {
+                    name: {
+                        type: "string",
+                    },
+                    bio: {
+                        type: "string",
+                    },
+                    links: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                website: {
+                                    type: "string",
+                                },
+                                text: {
+                                    type: "string",
+                                }
+                            }
+                        }
+                    },
+                    cryptos: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    following: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    },
+                    public: {
+                        type: "boolean",
+                    },
+                }
+            },
+
+            LoginInput: {
+                type: "object",
+                properties: {
+                    email: {
                         type: "string"
                     },
                     password: {
                         type: "string"
-                    },
-                    salt: {
+                    }
+                }
+            },
+
+            LoginOutput: {
+                type: "object",
+                properties: {
+                    token: {
                         type: "string"
-                    },
-                    //TODO data related to this user's profile
+                    }
                 }
             }
 
@@ -135,9 +181,16 @@ export default {
         securitySchemes: {
             api_key: {
                 type: "apiKey",
-                name: "Authorization",
+                name: "api-key",
                 in: "header"
             },
+            token: {
+                type: "http",
+                scheme: "bearer",
+                bearerFormat: "JWT",
+                name: "Authorization",
+                in: "header"
+            }
         }
     },
     paths: {
