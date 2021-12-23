@@ -4,10 +4,14 @@ import { AxiosRequestConfig, default as axios } from "axios";
 import assert from "assert";
 import { Profile } from "../models/profile.model";
 import { getAxiosConfig } from "../utils/utils";
+import { OAuth2Client } from "google-auth-library";
 
 const router = express.Router();
 
 assert(process.env.BUSINESS_LOGIC_API_KEY, "BUSINESS_LOGIC_API_KEY not found in .env file!");
+assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID not found in .env file!");
+assert(process.env.GOOGLE_REDIRECT_URI, "GOOGLE_CLIENT_SECRET not found in .env file!");
+
 
 const axiosConfig: AxiosRequestConfig<any> = {
     headers: {
@@ -17,6 +21,136 @@ const axiosConfig: AxiosRequestConfig<any> = {
         return true;
     }
 }
+
+router.get("/google/oauth", async (req, res) => {
+
+    const oAuth2Client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.GOOGLE_REDIRECT_URI
+    );
+
+    const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
+    });
+
+    res.send({
+        url: authUrl
+    });
+});
+
+router.get("/google/callback", async (req, res) => {
+
+    if (req.query.code && typeof (req.query.code) === "string") {
+
+        const oAuth2Client = new OAuth2Client(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            process.env.GOOGLE_REDIRECT_URI
+        );
+
+        try {
+            const credentials = await oAuth2Client.getToken(req.query.code);
+            const { tokens } = credentials;
+            oAuth2Client.setCredentials(tokens);
+
+            const url = "https://people.googleapis.com/v1/people/me?personFields=names,emailAddresses";
+
+            try {
+                const response = await oAuth2Client.request<any>({ url });
+
+                const email = response.data.emailAddresses[0].value;
+                const name = response.data.names[0].displayName;
+
+                const exists = await axios.get("http://business-logic:8000/users/email/" + email, axiosConfig);
+
+                if (exists.status != 200) {
+                    return res.status(500).send({
+                        statusCode: 500,
+                        message: "Error while checking if user exists."
+                    });
+                }
+
+                if (exists.data === false) {
+                    //perform user login
+
+                    const response = await axios.post("http://business-logic:8000/users/oauth", {
+                        email: email
+                    }, axiosConfig);
+
+                    if (response.status != 200) {
+                        return res.status(response.status).send(response.data);
+                    }
+
+                    return res.send(response.data);
+                } else {
+                    //create user
+
+                    //check if username is available
+                    let username = name.replace(/\s/g, "_");
+
+                    const username_exists = await axios.get("http://business-logic:8000/users/username/" + username, axiosConfig);
+
+                    if (username_exists.status != 200) {
+                        return res.status(500).send({
+                            statusCode: 500,
+                            message: "Error while checking if username exists."
+                        });
+                    }
+
+                    if (username_exists.data === false) {
+                        username += "_" + Math.floor(Math.random() * 100);
+                    }
+
+                    const created = await axios.post("http://business-logic:8000/users", {
+                        email: email,
+                        account_type: "google",
+                        username: username
+                    }, axiosConfig);
+
+                    if (created.status != 200) {
+                        return res.status(500).send({
+                            statusCode: 500,
+                            message: "Error while creating user."
+                        });
+                    }
+
+                    //perform user login
+                    const token = await axios.post("http://business-logic:8000/users/oauth", {
+                        email: email
+                    }, axiosConfig);
+
+                    if (token.status != 200) {
+                        return res.status(token.status).send(token.data);
+                    }
+
+                    return res.send(token.data);
+                }
+            } catch (err) {
+                return res.status(500).send({
+                    statusCode: 500,
+                    message: "Error while getting user profile.",
+                    exception: err
+                });
+            }
+        } catch (err) {
+            return res.status(500).send({
+                statusCode: 500,
+                message: "Error while getting authentication token.",
+                exception: err
+            });
+        }
+
+    } else {
+        res.status(400).send({
+            statusCode: 400,
+            message: "Missing code in request."
+        });
+    }
+
+    return res.send("Hello");
+});
 
 router.post("/users/login", async (req, res) => {
     const response = await axios.post("http://business-logic:8000" + req.path, req.body, getAxiosConfig(axiosConfig, req));
@@ -34,7 +168,9 @@ router.get("/users/email/:email", async (req, res) => {
 });
 
 router.post("/users/", async (req, res) => {
-    const response = await axios.post("http://business-logic:8000" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+    const data = { ...req.body };
+    data.account_type = "email";
+    const response = await axios.post("http://business-logic:8000" + req.path, data, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 

@@ -868,5 +868,156 @@ export default {
                 },
             },
         },
+    },
+    '/google/oauth': {
+        get: {
+            tags: ["Users"],
+            description: "Gets the url to redirect the user to the google oauth page",
+            responses: {
+                200: {
+                    description: "The url to redirect the user to the google oauth page",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    url: {
+                                        type: "string",
+                                    },
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
+    '/google/callback': {
+        get: {
+            tags: ["Users"],
+            description: "Callback called by the google oauth page",
+            parameters: [
+                {
+                    name: "code",
+                    in: "query",
+                    schema: {
+                        type: "string"
+                    }
+                },
+                {
+                    name: "scope",
+                    in: "query",
+                    schema: {
+                        type: "string"
+                    },
+                },
+                {
+                    name: "authuser",
+                    in: "query",
+                    schema: {
+                        type: "number",
+                    },
+                },
+                {
+                    name: "prompt",
+                    in: "query",
+                    schema: {
+                        type: "string",
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The token to use to authenticate the user",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/LoginOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
     }
 }

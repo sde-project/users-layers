@@ -2,7 +2,6 @@ import assert from "assert";
 import * as dotenv from "dotenv";
 
 dotenv.config();
-assert(process.env.BUSINESS_LOGIC_API_KEY, "BUSINESS_LOGIC_API_KEY not found in .env file!");
 
 import {default as express} from "express";
 import { default as cors } from "cors";

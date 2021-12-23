@@ -1,4 +1,58 @@
 export default {
+    "/users/oauth": {
+        post: {
+            tags: ["Users"],
+            description: "Provides a token for a user logged in through the OAuth provider.",
+            parameters: [],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                email: {
+                                    type: "string",
+                                    description: "The email of the user to login.",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Login was successfull",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/LoginOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
     "/users/login": {
         post: {
             tags: ["Users"],

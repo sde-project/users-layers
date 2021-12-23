@@ -29,6 +29,52 @@ const axiosConfig: AxiosRequestConfig<any> = {
     }
 }
 
+//this api should not be accessible by the public
+router.post("/oauth",
+    body("email").isEmail().normalizeEmail(),
+    async (req, res) => {
+        const validator_result = validationResult(req);
+
+        if (!validator_result.isEmpty()) {
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
+        }
+
+        const response = await axios.get("http://db:8000/users/email/" + req.body.email, axiosConfig);
+
+        if (response.status !== 200) {
+            return res.status(400).send({
+                statusCode: 400,
+                message: "User not found"
+            });
+        }
+
+        const user = response.data;
+
+        assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
+
+        const profile = await axios.get("http://db:8000/profiles/userid/" + user._id, axiosConfig);
+
+        if (profile.status != 200) {
+            return res.status(500).send({
+                statusCode: 500,
+                message: "Cannot find a profile for this user, contact an administrator",
+            });
+        }
+
+        const token = jwt.sign({
+            id: profile.data._id,
+        }, process.env.JWT_SECRET);
+
+        return res.send({
+            token: token
+        });
+    }
+);
+
 router.post("/login",
     body("email").isEmail().normalizeEmail(),
     body("password").isString(),
