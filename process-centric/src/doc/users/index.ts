@@ -111,7 +111,6 @@ export default {
             description: "Get users from (part of) username",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -177,7 +176,6 @@ export default {
             description: "Get users that follow a particular crypto",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -243,7 +241,6 @@ export default {
             description: "Get a user from its id",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -314,7 +311,6 @@ export default {
             description: "Edit user data",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -396,7 +392,6 @@ export default {
             description: "Get data about the logged user",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -440,7 +435,6 @@ export default {
             description: "Get the users that the user is following",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -514,7 +508,6 @@ export default {
             description: "Add a user to the list of users that the user is following",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -547,7 +540,7 @@ export default {
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/UserOutput",
+                                $ref: "#/components/schemas/UserOutput"
                             }
                         }
                     }
@@ -601,7 +594,6 @@ export default {
             description: "Remove a user from the list of users that the user is following",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -674,7 +666,6 @@ export default {
             description: "Get the users that the user is following",
             security: [
                 {
-                    api_key: [],
                     token: [],
                 }
             ],
@@ -748,11 +739,6 @@ export default {
         get: {
             tags: ["Users"],
             description: "Checks if the username is available",
-            security: [
-                {
-                    api_key: [],
-                }
-            ],
             parameters: [
                 {
                     name: "username",
@@ -820,11 +806,6 @@ export default {
         get: {
             tags: ["Users"],
             description: "Checks if the email is available",
-            security: [
-                {
-                    api_key: [],
-                }
-            ],
             parameters: [
                 {
                     name: "email",

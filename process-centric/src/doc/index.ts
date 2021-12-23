@@ -1,10 +1,10 @@
-import { default as auth } from "./users/index";
+import { default as users } from "./users/index";
 
 export default {
     openapi: "3.0.3",
     info: {
-        title: "Business logic layer",
-        description: "User's Business logic for CryptoDashboard",
+        title: "Process centric layer",
+        description: "User's Process centric layer for CryptoDashboard",
         version: "1.0.0",
         contact: {
             name: "Carlo Ramponi",
@@ -14,13 +14,8 @@ export default {
     },
     servers: [
         {
-            url: "http://localhost:8002/",
+            url: "http://localhost:8000/",
             description: "Local server",
-        }
-    ],
-    security: [
-        {
-            api_key: []
         }
     ],
     components: {
@@ -43,10 +38,6 @@ export default {
                 properties: {
                     email: {
                         type: "string",
-                    },
-                    account_type: {
-                        type: "string",
-                        enum: ["email", "google"]
                     },
                     password: {
                         type: "string"
@@ -212,11 +203,6 @@ export default {
         },
 
         securitySchemes: {
-            api_key: {
-                type: "apiKey",
-                name: "api-key",
-                in: "header"
-            },
             token: {
                 type: "http",
                 scheme: "bearer",
@@ -227,6 +213,6 @@ export default {
         }
     },
     paths: {
-        ...auth
+        ...users
     }
 };

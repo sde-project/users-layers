@@ -4,9 +4,9 @@ cd db/src
 npm run build
 cd ../../
 
-# cd auth/src
-# npm run build
-# cd ../../
+cd process-centric/src
+npm run build
+cd ../../
 
 cd business-logic/src
 npm run build
