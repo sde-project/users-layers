@@ -595,6 +595,79 @@ export default {
             },
         },
     },
+    '/users/id/{id}/following/{following}': {
+        delete: {
+            tags: ["Users"],
+            description: "Remove a user from the list of users that the user is following",
+            security: [
+                {
+                    api_key: [],
+                    token: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                },
+                {
+                    name: "following",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "Operation succesful",
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
     '/users/id/{id}/followers': {
         get: {
             tags: ["Users"],
@@ -624,6 +697,150 @@ export default {
                                 items: {
                                     $ref: "#/components/schemas/UserOutput"
                                 }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
+    '/users/username/{username}': {
+        get: {
+            tags: ["Users"],
+            description: "Checks if the username is available",
+            security: [
+                {
+                    api_key: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "username",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "whether the username is available",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "boolean",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
+    '/users/email/{email}': {
+        get: {
+            tags: ["Users"],
+            description: "Checks if the email is available",
+            security: [
+                {
+                    api_key: [],
+                }
+            ],
+            parameters: [
+                {
+                    name: "email",
+                    in: "path",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "whether the email is available",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "boolean",
                             }
                         }
                     }
