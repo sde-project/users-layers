@@ -5,29 +5,9 @@ import { default as bcrypt } from "bcrypt";
 import assert from "assert";
 import { default as jwt } from "jsonwebtoken";
 import { Profile } from "../models/profile.model";
-import { filterPublicProfiles } from "../utils/utils";
-
-declare global {
-    namespace Express {
-        interface Request {
-            user?: any
-        }
-    }
-}
+import { authenticate, axiosConfig, filterPublicProfiles } from "../utils/utils";
 
 const router = express.Router();
-
-assert(process.env.DB_API_KEY, "DB_API_KEY not found in .env file!");
-assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
-
-const axiosConfig: AxiosRequestConfig<any> = {
-    headers: {
-        "api-key": process.env.DB_API_KEY
-    },
-    validateStatus: (_) => {
-        return true;
-    }
-}
 
 //this api should not be accessible by the public
 router.post("/oauth",
@@ -258,28 +238,8 @@ router.post("/",
     }
 );
 
-router.use(async (req, res, next) => {
-    if (req.headers.authorization) {
-        const token = req.headers.authorization.split(" ")[1];
-        assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
-        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-            if (err) {
-                return res.status(401).send({
-                    statusCode: 401,
-                    message: "Invalid token"
-                });
-            }
-            req.user = decoded;
-
-            next();
-        });
-    } else {
-        return res.status(401).send({
-            statusCode: 401,
-            message: "No token provided"
-        });
-    }
-});
+//From now on, the requests are authenticated
+router.use(authenticate);
 
 router.put("/id/:id", async (req, res) => {
 

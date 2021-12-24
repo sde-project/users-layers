@@ -1,4 +1,5 @@
-import { default as auth } from "./users/index";
+import devices from "./devices";
+import auth from "./users";
 
 export default {
     openapi: "3.0.3",
@@ -227,6 +228,7 @@ export default {
         }
     },
     paths: {
-        ...auth
+        ...auth,
+        ...devices
     }
 };

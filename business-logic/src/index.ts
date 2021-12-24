@@ -11,6 +11,15 @@ import { default as morgan } from "morgan";
 import { default as swagger } from "swagger-ui-express";
 import { default as docs } from "./doc/index";
 import { default as users } from "./routes/users";
+import { default as devices } from "./routes/devices";
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: any
+        }
+    }
+}
 
 const app = express();
 app.use(express.json());
@@ -31,6 +40,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", users);
+app.use("/devices", devices);
 
 app.use((req, res) => {
     return res.status(404).send({
