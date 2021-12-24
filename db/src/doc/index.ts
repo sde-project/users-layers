@@ -59,6 +59,45 @@ export default {
                 }
             },
 
+            DeviceInput: {
+                type: "object",
+                properties: {
+                    user: {
+                        type: "string",
+                    },
+                    token: {
+                        type: "string",
+                    },
+                    created: {
+                        type: "string",
+                    },
+                    last_used: {
+                        type: "string",
+                    }
+                }
+            },
+
+            DeviceOutput: {
+                type: "object",
+                properties: {
+                    _id: {
+                        type: "string",
+                    },
+                    user: {
+                        type: "string",
+                    },
+                    token: {
+                        type: "string",
+                    },
+                    created: {
+                        type: "string",
+                    },
+                    last_used: {
+                        type: "string",
+                    }
+                }
+            },
+
             AuthPutInput: {
                 type: "object",
                 properties: {

@@ -2,24 +2,97 @@ export default {
     "/devices": {
         post: {
             tags: ["Devices"],
-            description: "Create auth object",
+            description: "Insert a new device token",
             parameters: [],
             requestBody: {
                 content: {
                     "application/json": {
                         schema: {
-                            $ref: "#/components/schemas/AuthInput", // todo input data model
+                            $ref: "#/components/schemas/DeviceInput",
                         },
                     },
                 },
             },
             responses: {
                 200: {
-                    description: "Auth object created succesfully",
+                    description: "Token inserted succesfully",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/AuthObject"
+                                $ref: "#/components/schemas/DeviceOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        }
+    },
+    "/devices/all": {
+        get: {
+            tags: ["Devices"],
+            description: "Get all devices",
+            responses: {
+                200: {
+                    description: "The list of devices",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "array",
+                                items: {
+                                    $ref: "#/components/schemas/DeviceOutput",
+                                }
+                            },
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        }
+    },
+    "/devices/user/{user}": {
+        get: {
+            tags: ["Devices"],
+            description: "Get tokens for a user",
+            parameters: [
+                {
+                    name: "user",
+                    in: "path",
+                    description: "User id",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The devices for the user",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "array",
+                                items: {
+                                    $ref: "#/components/schemas/DeviceOutput",
+                                }
                             }
                         }
                     }
@@ -37,181 +110,198 @@ export default {
             },
         },
     },
-    // '/users/all': {
-    //     get: {
-    //         tags: ["Users"],
-    //         description: "Get all auth objects",
-    //         responses: {
-    //             200: {
-    //                 description: "The auth objects",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             type: "array",
-    //                             items: {
-    //                                 $ref: "#/components/schemas/AuthObject"
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             400: {
-    //                 description: "Parameters error",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/GeneralError"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //         },
-    //     },
-    // },
-    // '/users/id/{id}': {
-    //     get: {
-    //         tags: ["Users"],
-    //         description: "Get an auth object from its id",
-    //         parameters: [
-    //             {
-    //                 name: "id",
-    //                 in: "path",
-    //                 schema: {
-    //                     type: "string"
-    //                 }
-    //             }
-    //         ],
-    //         responses: {
-    //             200: {
-    //                 description: "The auth object",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/AuthObject"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             400: {
-    //                 description: "Parameters error",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/GeneralError"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //         },
-    //     },
-    //     put: {
-    //         tags: ["Users"],
-    //         description: "Edit password (and salt)",
-    //         parameters: [
-    //             {
-    //                 name: "id",
-    //                 in: "path",
-    //                 schema: {
-    //                     type: "string"
-    //                 }
-    //             }
-    //         ],
-    //         requestBody: {
-    //             content: {
-    //                 "application/json": {
-    //                     schema: {
-    //                         $ref: "#/components/schemas/AuthPutInput", // todo input data model
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //         responses: {
-    //             200: {
-    //                 description: "Auth object modified succesfully",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/AuthObject"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             400: {
-    //                 description: "Parameters error",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/GeneralError"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //         },
-    //     },
-    //     delete: {
-    //         tags: ["Users"],
-    //         description: "Delete an auth object",
-    //         parameters: [
-    //             {
-    //                 name: "id",
-    //                 in: "path",
-    //                 schema: {
-    //                     type: "string"
-    //                 }
-    //             }
-    //         ],
-    //         responses: {
-    //             200: {
-    //                 description: "Auth object deleted succesfully",
-    //             },
-    //             400: {
-    //                 description: "Parameters error",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/GeneralError"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //         },
-    //     },
-    // },
-    // '/users/email/{email}': {
-    //     get: {
-    //         tags: ["Users"],
-    //         description: "Get an auth object from its email",
-    //         parameters: [
-    //             {
-    //                 name: "email",
-    //                 in: "path",
-    //                 schema: {
-    //                     type: "string"
-    //                 }
-    //             }
-    //         ],
-    //         responses: {
-    //             200: {
-    //                 description: "The auth object",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/AuthObject"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             400: {
-    //                 description: "Parameters error",
-    //                 content: {
-    //                     "application/json": {
-    //                         schema: {
-    //                             $ref: "#/components/schemas/GeneralError"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //         },
-    //     },
-    // }
+    "/devices/token/{token}": {
+        get: {
+            tags: ["Devices"],
+            description: "Get the user that is owning the token",
+            parameters: [
+                {
+                    name: "token",
+                    in: "path",
+                    description: "token",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The user id that is owning the token",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/DeviceOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Token not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                }
+            },
+        },
+    },
+    "/devices/id/{id}": {
+        get: {
+            tags: ["Devices"],
+            description: "Get a device object",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "id",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            responses: {
+                200: {
+                    description: "The object",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/DeviceOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Token not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        put: {
+            tags: ["Devices"],
+            description: "Adeit a device object",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "id",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/DeviceInput",
+                        }
+                    }
+                }
+            },
+            responses: {
+                200: {
+                    description: "The updated object",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/DeviceOutput",
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Token not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        delete: {
+            tags: ["Devices"],
+            description: "Delete a device object",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "id",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            responses: {
+                200: {
+                    description: "Object deleted succesfully",
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                }
+            },
+        }
+    }
 }

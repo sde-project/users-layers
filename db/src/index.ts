@@ -8,6 +8,7 @@ assert(process.env.DB_API_KEY, "DB_API_KEY not found in .env file!");
 import { connect } from "mongoose";
 import {default as express} from "express";
 import { default as auth } from "./routes/auth";
+import { default as devices } from "./routes/devices";
 import { default as profiles } from "./routes/profile";
 import { default as cors } from "cors";
 import { default as morgan } from "morgan";
@@ -38,6 +39,7 @@ connect(process.env.MONGO_DB).then(() => {
     
     app.use("/users", auth);
     app.use("/profiles", profiles);
+    app.use("/devices", devices);
 
     app.use((req, res) => {
         return res.status(404).send({
