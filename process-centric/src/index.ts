@@ -1,7 +1,4 @@
 import assert from "assert";
-import * as dotenv from "dotenv";
-
-dotenv.config();
 
 import {default as express} from "express";
 import { default as cors } from "cors";

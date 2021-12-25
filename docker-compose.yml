@@ -5,11 +5,22 @@ services:
     build: ./process-centric
     ports:
       - 8000:8000
+    restart: on-failure
+    env_file:
+      - process-centric/src/.env
   db:
     build: ./db
     ports:
       - 8001:8000
+    restart: on-failure
+    env_file:
+      - db/src/.env
   business-logic:
     build: ./business-logic
     ports:
       - 8002:8000
+    restart: on-failure
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/firebase_key.json
+    env_file:
+      - business-logic/src/.env

@@ -8,9 +8,10 @@ import { OAuth2Client } from "google-auth-library";
 
 const router = express.Router();
 
-assert(process.env.BUSINESS_LOGIC_API_KEY, "BUSINESS_LOGIC_API_KEY not found in .env file!");
-assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID not found in .env file!");
-assert(process.env.GOOGLE_REDIRECT_URI, "GOOGLE_CLIENT_SECRET not found in .env file!");
+assert(process.env.BUSINESS_LOGIC_API_KEY, "BUSINESS_LOGIC_API_KEY not found in environment!");
+assert(process.env.BUSINESS_LOGIC_URL, "BUSINESS_LOGIC_URL not found in environment!");
+assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID not found in environment!");
+assert(process.env.GOOGLE_REDIRECT_URI, "GOOGLE_CLIENT_SECRET not found in environment!");
 
 
 const axiosConfig: AxiosRequestConfig<any> = {
@@ -63,7 +64,7 @@ router.get("/google/callback", async (req, res) => {
                 const email = response.data.emailAddresses[0].value;
                 const name = response.data.names[0].displayName;
 
-                const exists = await axios.get("http://business-logic:8000/users/email/" + email, axiosConfig);
+                const exists = await axios.get(process.env.BUSINESS_LOGIC_URL + "/users/email/" + email, axiosConfig);
 
                 if (exists.status != 200) {
                     return res.status(500).send({
@@ -75,7 +76,7 @@ router.get("/google/callback", async (req, res) => {
                 if (exists.data === false) {
                     //perform user login
 
-                    const response = await axios.post("http://business-logic:8000/users/oauth", {
+                    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "/users/oauth", {
                         email: email
                     }, axiosConfig);
 
@@ -90,7 +91,7 @@ router.get("/google/callback", async (req, res) => {
                     //check if username is available
                     let username = name.replace(/\s/g, "_");
 
-                    const username_exists = await axios.get("http://business-logic:8000/users/username/" + username, axiosConfig);
+                    const username_exists = await axios.get(process.env.BUSINESS_LOGIC_URL + "/users/username/" + username, axiosConfig);
 
                     if (username_exists.status != 200) {
                         return res.status(500).send({
@@ -103,7 +104,7 @@ router.get("/google/callback", async (req, res) => {
                         username += "_" + Math.floor(Math.random() * 100);
                     }
 
-                    const created = await axios.post("http://business-logic:8000/users", {
+                    const created = await axios.post(process.env.BUSINESS_LOGIC_URL + "/users", {
                         email: email,
                         account_type: "google",
                         username: username
@@ -117,7 +118,7 @@ router.get("/google/callback", async (req, res) => {
                     }
 
                     //perform user login
-                    const token = await axios.post("http://business-logic:8000/users/oauth", {
+                    const token = await axios.post(process.env.BUSINESS_LOGIC_URL + "/users/oauth", {
                         email: email
                     }, axiosConfig);
 
@@ -153,69 +154,69 @@ router.get("/google/callback", async (req, res) => {
 });
 
 router.post("/users/login", async (req, res) => {
-    const response = await axios.post("http://business-logic:8000" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/username/:username", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/email/:email", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.post("/users/", async (req, res) => {
     const data = { ...req.body };
     data.account_type = "email";
-    const response = await axios.post("http://business-logic:8000" + req.path, data, getAxiosConfig(axiosConfig, req));
+    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, data, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.put("/users/id/:id", async (req, res) => {
-    const response = await axios.put("http://business-logic:8000" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+    const response = await axios.put(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/id/:id", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/me", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/fromUsername/:username", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/fromCrypto/:crypto", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/id/:id/following", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.put("/users/id/:id/following", async (req, res) => {
-    const response = await axios.put("http://business-logic:8000" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+    const response = await axios.put(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.delete("/users/id/:id/following/:following", async (req, res) => {
-    const response = await axios.delete("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.delete(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
 router.get("/users/id/:id/followers", async (req, res) => {
-    const response = await axios.get("http://business-logic:8000" + req.path, getAxiosConfig(axiosConfig, req));
+    const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 

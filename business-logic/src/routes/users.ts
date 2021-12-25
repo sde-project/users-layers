@@ -6,6 +6,7 @@ import assert from "assert";
 import { default as jwt } from "jsonwebtoken";
 import { Profile } from "../models/profile.model";
 import { authenticate, axiosConfig, filterPublicProfiles } from "../utils/utils";
+import sendNotification from "../utils/notifications";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post("/oauth",
             });
         }
 
-        const response = await axios.get("http://db:8000/users/email/" + req.body.email, axiosConfig);
+        const response = await axios.get(process.env.DB_URL + "/users/email/" + req.body.email, axiosConfig);
 
         if (response.status !== 200) {
             return res.status(400).send({
@@ -36,7 +37,7 @@ router.post("/oauth",
 
         assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
 
-        const profile = await axios.get("http://db:8000/profiles/userid/" + user._id, axiosConfig);
+        const profile = await axios.get(process.env.DB_URL + "/profiles/userid/" + user._id, axiosConfig);
 
         if (profile.status != 200) {
             return res.status(500).send({
@@ -69,7 +70,7 @@ router.post("/login",
             });
         }
 
-        const response = await axios.get("http://db:8000/users/email/" + req.body.email, axiosConfig);
+        const response = await axios.get(process.env.DB_URL + "/users/email/" + req.body.email, axiosConfig);
 
         if (response.status !== 200) {
             return res.status(400).send({
@@ -90,7 +91,7 @@ router.post("/login",
 
         assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
 
-        const profile = await axios.get("http://db:8000/profiles/userid/" + user._id, axiosConfig);
+        const profile = await axios.get(process.env.DB_URL + "/profiles/userid/" + user._id, axiosConfig);
 
         if (profile.status != 200) {
             return res.status(500).send({
@@ -109,7 +110,7 @@ router.post("/login",
     }
 );
 
-router.get("/username/:username", param("username").isString().isLength({min: 8}), async (req, res) => {
+router.get("/username/:username", param("username").isString().isLength({ min: 8 }), async (req, res) => {
 
     const validator_result = validationResult(req);
 
@@ -121,7 +122,7 @@ router.get("/username/:username", param("username").isString().isLength({min: 8}
         });
     }
 
-    const response = await axios.get<Profile[]>("http://db:8000/profiles/username/" + req.params?.username, axiosConfig);
+    const response = await axios.get<Profile[]>(process.env.DB_URL + "/profiles/username/" + req.params?.username, axiosConfig);
 
     if (response.status != 200) {
         return res.status(response.status).send(response.data);
@@ -129,7 +130,7 @@ router.get("/username/:username", param("username").isString().isLength({min: 8}
 
     const profiles = response.data;
 
-    if(profiles.some(profile => profile.username == req.params?.username)) {
+    if (profiles.some(profile => profile.username == req.params?.username)) {
         return res.send(false);
     } else {
         return res.send(true);
@@ -148,11 +149,11 @@ router.get("/email/:email", param("email").isEmail(), async (req, res) => {
         });
     }
 
-    const response = await axios.get<Profile[]>("http://db:8000/users/email/" + req.params?.email, axiosConfig);
+    const response = await axios.get<Profile[]>(process.env.DB_URL + "/users/email/" + req.params?.email, axiosConfig);
 
     if (response.status == 200) {
         return res.send(false);
-    } else if(response.status == 404) {
+    } else if (response.status == 404) {
         return res.send(true);
     } else {
         return res.status(response.status).send(response.data);
@@ -163,7 +164,7 @@ router.post("/",
     body("email").exists().isEmail(),
     body("account_type").exists().isIn(["email", "google"]),
     body("password").if(body("account_type").equals("email")).notEmpty(),
-    body("username").exists().isLength({min: 8}),
+    body("username").exists().isLength({ min: 8 }),
     async (req, res) => {
 
         const validator_result = validationResult(req);
@@ -201,7 +202,7 @@ router.post("/",
 
             }
 
-            const response = await axios.post("http://db:8000/users/", user, axiosConfig);
+            const response = await axios.post(process.env.DB_URL + "/users/", user, axiosConfig);
             if (response.status == 200) {
 
                 //Auth object created succefully, creating user's profile
@@ -210,12 +211,12 @@ router.post("/",
                     username: req.body.username
                 };
 
-                const profile_response = await axios.post("http://db:8000/profiles/", profile, axiosConfig);
+                const profile_response = await axios.post(process.env.DB_URL + "/profiles/", profile, axiosConfig);
                 if (profile_response.status == 200) {
                     res.send(profile_response.data);
                 } else {
                     //rollback
-                    await axios.delete("http://db:8000/users/id/" + response.data._id, axiosConfig);
+                    await axios.delete(process.env.DB_URL + "/users/id/" + response.data._id, axiosConfig);
                     res.status(500).send({
                         statusCode: 500,
                         message: "There was an error creating user's profile",
@@ -276,7 +277,7 @@ router.put("/id/:id", async (req, res) => {
         editObj.following = req.body.following;
     }
 
-    const response = await axios.put("http://db:8000/profiles/id/" + req.params.id, editObj, axiosConfig);
+    const response = await axios.put(process.env.DB_URL + "/profiles/id/" + req.params.id, editObj, axiosConfig);
 
     if (response.status != 200) {
         return res.status(response.status).send(response.data);
@@ -288,7 +289,7 @@ router.put("/id/:id", async (req, res) => {
 
 router.get("/id/:id", async (req, res) => {
 
-    const profile = await axios.get("http://db:8000/profiles/id/" + req.params.id, axiosConfig);
+    const profile = await axios.get(process.env.DB_URL + "/profiles/id/" + req.params.id, axiosConfig);
 
     if (profile.status != 200) {
         return res.status(profile.status).send(profile.data);
@@ -304,7 +305,7 @@ router.get("/id/:id", async (req, res) => {
 
 router.get("/me", async (req, res) => {
 
-    const profile = await axios.get("http://db:8000/profiles/id/" + req.user.id, axiosConfig);
+    const profile = await axios.get(process.env.DB_URL + "/profiles/id/" + req.user.id, axiosConfig);
 
     if (profile.status != 200) {
         return res.status(profile.status).send(profile.data);
@@ -328,7 +329,7 @@ router.get("/fromUsername/:username",
             });
         }
 
-        const profiles = await axios.get("http://db:8000/profiles/username/" + req.params?.username, axiosConfig);
+        const profiles = await axios.get(process.env.DB_URL + "/profiles/username/" + req.params?.username, axiosConfig);
 
         if (profiles.status !== 200) {
             return res.status(profiles.status).send(profiles.data);
@@ -352,7 +353,7 @@ router.get("/fromCrypto/:crypto",
             });
         }
 
-        const profiles = await axios.get("http://db:8000/profiles/crypto/" + req.params?.crypto, axiosConfig);
+        const profiles = await axios.get(process.env.DB_URL + "/profiles/crypto/" + req.params?.crypto, axiosConfig);
 
         if (profiles.status !== 200) {
             return res.status(profiles.status).send(profiles.data);
@@ -364,7 +365,7 @@ router.get("/fromCrypto/:crypto",
 
 router.get("/id/:id/following", async (req, res) => {
 
-    const profile = await axios.get<Profile>("http://db:8000/profiles/id/" + req.params.id, axiosConfig);
+    const profile = await axios.get<Profile>(process.env.DB_URL + "/profiles/id/" + req.params.id, axiosConfig);
 
     if (profile.status != 200) {
         return res.status(profile.status).send(profile.data);
@@ -380,7 +381,7 @@ router.get("/id/:id/following", async (req, res) => {
     if (profile.data.following) {
 
         const profiles = await Promise.all(profile.data.following.map(async (id: string) => {
-            const profile = await axios.get<Profile>("http://db:8000/profiles/id/" + id, axiosConfig);
+            const profile = await axios.get<Profile>(process.env.DB_URL + "/profiles/id/" + id, axiosConfig);
             if (profile.status != 200) {
                 return null;
             }
@@ -414,7 +415,7 @@ router.put("/id/:id/following", body("id").isString(), async (req, res) => {
         });
     }
 
-    const profile = await axios.get<Profile>("http://db:8000/profiles/id/" + req.params?.id, axiosConfig);
+    const profile = await axios.get<Profile>(process.env.DB_URL + "/profiles/id/" + req.params?.id, axiosConfig);
 
     if (profile.status != 200) {
         return res.status(profile.status).send(profile.data);
@@ -427,7 +428,7 @@ router.put("/id/:id/following", body("id").isString(), async (req, res) => {
         });
     }
 
-    const follow = await axios.get<Profile>("http://db:8000/profiles/id/" + req.body.id, axiosConfig);
+    const follow = await axios.get<Profile>(process.env.DB_URL + "/profiles/id/" + req.body.id, axiosConfig);
 
     if (follow.status == 404 || !follow.data._id) {
         return res.status(400).send({
@@ -440,15 +441,28 @@ router.put("/id/:id/following", body("id").isString(), async (req, res) => {
         return res.status(follow.status).send(follow.data);
     }
 
+    if (profile.data.following?.includes(follow.data._id)) {
+        return res.status(400).send({
+            statusCode: 400,
+            message: "You are already following this user"
+        });
+    }
+
     const new_following = (profile.data.following ?? []).concat(follow.data._id);
 
-    const response = await axios.put("http://db:8000/profiles/id/" + req.params?.id, {
+    const response = await axios.put(process.env.DB_URL + "/profiles/id/" + req.params?.id, {
         following: new_following
     }, axiosConfig);
 
     if (response.status != 200) {
         return res.status(response.status).send(response.data);
     }
+
+    //follow added succesfully, send a notification to the followed user (do not await completition, not required for this call)
+    sendNotification({
+        title: "New follower!",
+        body: `${profile.data.username} started following you!`,
+    }, [follow.data._id]).catch((e) => { console.error(e) }); //do nothing on error, not important
 
     return res.send(response.data);
 
@@ -463,7 +477,7 @@ router.delete("/id/:id/following/:following", async (req, res) => {
         });
     }
 
-    const profile = await axios.get<Profile>("http://db:8000/profiles/id/" + req.params.id, axiosConfig);
+    const profile = await axios.get<Profile>(process.env.DB_URL + "/profiles/id/" + req.params.id, axiosConfig);
 
     if (profile.status != 200) {
         return res.status(profile.status).send(profile.data);
@@ -472,18 +486,24 @@ router.delete("/id/:id/following/:following", async (req, res) => {
     if (profile.data.following && profile.data.following.includes(req.params.following)) {
 
         const new_following = profile.data.following.filter(id => id != req.params.following);
-        const response = await axios.put("http://db:8000/profiles/id/" + req.params.id, {
+        const response = await axios.put(process.env.DB_URL + "/profiles/id/" + req.params.id, {
             following: new_following
         }, axiosConfig);
 
-        if(response.status == 200) {
-            return res.sendStatus(200);
+        if (response.status != 200) {
+            return res.status(500).send({
+                statusCode: 500,
+                message: "Internal server error"
+            });
         }
 
-        return res.status(500).send({
-            statusCode: 500,
-            message: "Internal server error"
-        });
+        //follow removed succesfully, send a notification to the unfollowed user (do not await completition, not required for this call)
+        sendNotification({
+            title: "Bad news!",
+            body: `${profile.data.username} stopped following you!`,
+        }, [req.params.following]).catch((e) => { console.error(e) }); //do nothing on error, not important
+
+        return res.sendStatus(200);
 
     } else {
         return res.status(400).send({
@@ -496,7 +516,7 @@ router.delete("/id/:id/following/:following", async (req, res) => {
 
 router.get("/id/:id/followers", async (req, res) => {
 
-    const profiles = await axios.get("http://db:8000/profiles/all", axiosConfig);
+    const profiles = await axios.get(process.env.DB_URL + "/profiles/all", axiosConfig);
 
     if (profiles.status != 200) {
         return res.status(profiles.status).send(profiles.data);

@@ -165,6 +165,32 @@ export default {
                         type: "string"
                     }
                 }
+            },
+
+            Notification: {
+                type: "object",
+                properties: {
+                    notification: {
+                        type: "object",
+                        properties: {
+                            title: {
+                                type: "string",
+                            },
+                            body: {
+                                type: "string",
+                            },
+                            icon: {
+                                type: "string",
+                            },
+                        }
+                    },
+                    users: {
+                        type: "array",
+                        items: {
+                            type: "string",
+                        }
+                    }
+                }
             }
 
         },

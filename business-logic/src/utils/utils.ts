@@ -2,7 +2,7 @@ import assert from "assert";
 import { NextFunction, Request, Response } from "express";
 import { Profile } from "../models/profile.model";
 import { default as jwt } from "jsonwebtoken";
-import { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 assert(process.env.DB_API_KEY, "DB_API_KEY not found in .env file!");
 assert(process.env.JWT_SECRET, "JWT_SECRET not found in .env file!");
@@ -55,3 +55,4 @@ export const axiosConfig: AxiosRequestConfig<any> = {
         return true;
     }
 }
+

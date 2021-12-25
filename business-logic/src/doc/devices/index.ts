@@ -52,4 +52,50 @@ export default {
             },
         },
     },
+    "/devices/notifications": {
+        post: {
+            tags: ["Devices"],
+            description: "Send a notification to a group of users.",
+            parameters: [],
+            security: [
+                {
+                    api_key: [],
+                }
+            ],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/Notification",
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Notification sent successfully.",
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
 }
