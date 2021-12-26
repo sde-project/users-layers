@@ -33,7 +33,7 @@ export default {
                 }
             },
 
-            UserInput: {
+            RegisterInput: {
                 type: "object",
                 properties: {
                     email: {

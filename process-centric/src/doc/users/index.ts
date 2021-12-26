@@ -47,43 +47,33 @@ export default {
             },
         },
     },
-    "/users": {
+    "/users/register": {
         post: {
             tags: ["Users"],
-            description: "Create user",
+            description: "Register a user",
             parameters: [],
             requestBody: {
                 content: {
                     "application/json": {
                         schema: {
-                            $ref: "#/components/schemas/UserInput",
+                            $ref: "#/components/schemas/RegisterInput",
                         },
                     },
                 },
             },
             responses: {
                 200: {
-                    description: "User created succesfully",
+                    description: "Register was successfull",
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/UserOutput"
+                                $ref: "#/components/schemas/LoginOutput",
                             }
                         }
                     }
                 },
                 400: {
                     description: "Parameters error",
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/GeneralError"
-                            }
-                        }
-                    }
-                },
-                401: {
-                    description: "Unauthorized",
                     content: {
                         "application/json": {
                             schema: {
@@ -873,6 +863,16 @@ export default {
         get: {
             tags: ["Users"],
             description: "Gets the url to redirect the user to the google oauth page",
+            parameters: [
+                {
+                    name: "redirect_uri",
+                    in: "query",
+                    schema: {
+                        type: "string",
+                        required: true
+                    }
+                }
+            ],
             responses: {
                 200: {
                     description: "The url to redirect the user to the google oauth page",
@@ -963,6 +963,14 @@ export default {
                     in: "query",
                     schema: {
                         type: "string",
+                    }
+                },
+                {
+                    name: "redirect_uri",
+                    in: "query",
+                    schema: {
+                        type: "string",
+                        required: true
                     }
                 }
             ],

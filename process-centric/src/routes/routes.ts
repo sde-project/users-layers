@@ -28,7 +28,7 @@ router.get("/google/oauth", async (req, res) => {
     const oAuth2Client = new OAuth2Client(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET,
-        process.env.GOOGLE_REDIRECT_URI
+        req.query.redirect_uri?.toString()
     );
 
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -48,7 +48,7 @@ router.get("/google/callback", async (req, res) => {
         const oAuth2Client = new OAuth2Client(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
-            process.env.GOOGLE_REDIRECT_URI
+            req.query.redirect_uri?.toString()
         );
 
         try {
@@ -153,6 +153,33 @@ router.get("/google/callback", async (req, res) => {
     return res.send("Hello");
 });
 
+router.post("/users/register", async (req, res) => {
+    const data = { ...req.body };
+    data.account_type = "email";
+    
+    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "/users", data, getAxiosConfig(axiosConfig, req));
+    
+    if(response.status !== 200) {
+        return res.status(response.status).send(response.data);
+    }
+
+    const response2 = await axios.post(process.env.BUSINESS_LOGIC_URL + "/users/login", {
+        email: data.email,
+        password: data.password,
+    }, getAxiosConfig(axiosConfig, req));
+
+    if(response2.status !== 200) {
+        return res.status(response2.status).send(response2.data);
+    }
+
+    return res.send(response2.data);
+});
+
+router.post("/devices/token", async (req, res) => {
+    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+    return res.status(response.status).send(response.data);
+});
+
 router.post("/users/login", async (req, res) => {
     const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
@@ -165,13 +192,6 @@ router.get("/users/username/:username", async (req, res) => {
 
 router.get("/users/email/:email", async (req, res) => {
     const response = await axios.get(process.env.BUSINESS_LOGIC_URL + "" + req.path, getAxiosConfig(axiosConfig, req));
-    return res.status(response.status).send(response.data);
-});
-
-router.post("/users/", async (req, res) => {
-    const data = { ...req.body };
-    data.account_type = "email";
-    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, data, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 
