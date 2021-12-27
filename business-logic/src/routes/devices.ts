@@ -3,6 +3,7 @@ import express from "express";
 import { body, validationResult } from "express-validator";
 import { authenticate, axiosConfig } from "../utils/utils";
 import sendNotification from "../utils/notifications";
+import { Profile } from "../models/profile.model";
 
 const router = express.Router();
 
@@ -24,6 +25,43 @@ router.post("/notifications",
 
         try {
             await sendNotification(req.body.notification, req.body.users);
+        } catch(e) {
+            return res.status(500).send({
+                statusCode: 500,
+                error: "There wan an error while sending the notifications",
+                exception: e
+            });
+        }
+
+        return res.sendStatus(200);
+    }
+);
+
+router.post("/notifications/crypto/:crypto",
+    body("notification").isObject(),
+    body("notification.title").isString(),
+    body("notification.body").isString(),
+    async (req, res) => {
+        const validator_result = validationResult(req);
+
+        if (!validator_result.isEmpty()) {
+            return res.status(400).send({
+                statusCode: 400,
+                error: "Invalid request",
+                errors: validator_result.array()
+            });
+        }
+
+        const profiles = await axios.get<Profile[]>(process.env.DB_URL + "/profiles/crypto/" + req.params?.crypto, axiosConfig);
+
+        if (profiles.status !== 200) {
+            return res.status(profiles.status).send(profiles.data);
+        }
+
+        const user_ids:string[] = profiles.data.map(profile => profile._id || "").filter(id => id.length > 0);
+
+        try {
+            await sendNotification(req.body.notification, user_ids);
         } catch(e) {
             return res.status(500).send({
                 statusCode: 500,

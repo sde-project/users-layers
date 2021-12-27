@@ -191,6 +191,26 @@ export default {
                         }
                     }
                 }
+            },
+
+            NotificationCrypto: {
+                type: "object",
+                properties: {
+                    notification: {
+                        type: "object",
+                        properties: {
+                            title: {
+                                type: "string",
+                            },
+                            body: {
+                                type: "string",
+                            },
+                            icon: {
+                                type: "string",
+                            },
+                        }
+                    },
+                }
             }
 
         },

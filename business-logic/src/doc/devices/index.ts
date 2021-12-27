@@ -98,4 +98,60 @@ export default {
             },
         },
     },
+    "/devices/notifications/crypto/{crypto}": {
+        post: {
+            tags: ["Devices"],
+            description: "Send a notification to all the users that follow a given crypto.",
+            parameters: [
+                {
+                    name: "crypto",
+                    in: "path",
+                    description: "The crypto to be followed.",
+                    required: true,
+                    schema: {
+                        type: "string",
+                    },
+                }
+            ],
+            security: [
+                {
+                    api_key: [],
+                }
+            ],
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/NotificationCrypto",
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Notification sent successfully.",
+                },
+                400: {
+                    description: "Parameters error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "General Error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/GeneralError"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    },
 }
