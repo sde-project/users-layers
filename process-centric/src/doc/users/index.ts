@@ -859,7 +859,7 @@ export default {
             },
         },
     },
-    '/google/oauth': {
+    '/users/google/oauth': {
         get: {
             tags: ["Users"],
             description: "Gets the url to redirect the user to the google oauth page",
@@ -932,7 +932,7 @@ export default {
             },
         },
     },
-    '/google/callback': {
+    '/users/google/callback': {
         get: {
             tags: ["Users"],
             description: "Callback called by the google oauth page",
@@ -1024,6 +1024,58 @@ export default {
                             }
                         }
                     }
+                },
+            },
+        },
+        "/users/devices/token": {
+            post: {
+                tags: ["Users"],
+                description: "Associate a token to a user.",
+                parameters: [],
+                security: [
+                    {
+                        token: [],
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    token: {
+                                        type: "string",
+                                        description: "The token to be associated to the logged user.",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: {
+                        description: "Association successful.",
+                    },
+                    400: {
+                        description: "Parameters error",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/GeneralError"
+                                }
+                            }
+                        }
+                    },
+                    500: {
+                        description: "General Error",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/GeneralError"
+                                }
+                            }
+                        }
+                    },
                 },
             },
         },

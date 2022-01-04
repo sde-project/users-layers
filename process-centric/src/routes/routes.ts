@@ -23,7 +23,7 @@ const axiosConfig: AxiosRequestConfig<any> = {
     }
 }
 
-router.get("/google/oauth", async (req, res) => {
+router.get("/users/google/oauth", async (req, res) => {
 
     const oAuth2Client = new OAuth2Client(
         process.env.GOOGLE_CLIENT_ID,
@@ -41,7 +41,7 @@ router.get("/google/oauth", async (req, res) => {
     });
 });
 
-router.get("/google/callback", async (req, res) => {
+router.get("/users/google/callback", async (req, res) => {
 
     if (req.query.code && typeof (req.query.code) === "string") {
 
@@ -175,8 +175,8 @@ router.post("/users/register", async (req, res) => {
     return res.send(response2.data);
 });
 
-router.post("/devices/token", async (req, res) => {
-    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "" + req.path, req.body, getAxiosConfig(axiosConfig, req));
+router.post("/users/devices/token", async (req, res) => {
+    const response = await axios.post(process.env.BUSINESS_LOGIC_URL + "/devices/token", req.body, getAxiosConfig(axiosConfig, req));
     return res.status(response.status).send(response.data);
 });
 

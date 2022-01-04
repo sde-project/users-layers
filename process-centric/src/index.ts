@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 
-app.use('/api-docs', swagger.serve, swagger.setup(docs));
+app.use('/users/api-docs', swagger.serve, swagger.setup(docs));
 
 app.use("/", routes);
 
