@@ -5,7 +5,7 @@ networks:
     external: true
 
 services:
-  process-centric:
+  users-process-centric:
     build: ./process-centric
     ports:
       - 8000:8000
@@ -14,7 +14,7 @@ services:
       - process-centric/src/.env
     networks:
       - sde
-  db:
+  users-db:
     build: ./db
     ports:
       - 8001:8000
@@ -23,7 +23,7 @@ services:
       - db/src/.env
     networks:
       - sde
-  business-logic:
+  users-business-logic:
     build: ./business-logic
     ports:
       - 8002:8000
