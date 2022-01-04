@@ -1,5 +1,9 @@
 version: '3'
 
+networks:
+  sde:
+    external: true
+
 services:
   process-centric:
     build: ./process-centric
@@ -8,6 +12,8 @@ services:
     restart: on-failure
     env_file:
       - process-centric/src/.env
+    networks:
+      - sde
   db:
     build: ./db
     ports:
@@ -15,6 +21,8 @@ services:
     restart: on-failure
     env_file:
       - db/src/.env
+    networks:
+      - sde
   business-logic:
     build: ./business-logic
     ports:
@@ -24,3 +32,5 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/firebase_key.json
     env_file:
       - business-logic/src/.env
+    networks:
+      - sde
