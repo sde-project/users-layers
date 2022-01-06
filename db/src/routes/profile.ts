@@ -110,7 +110,7 @@ router.get("/crypto/:crypto",
         }
 
         try {
-            const profiles = await ProfileModel.find({ crypto: req.params?.crypto });
+            const profiles = await ProfileModel.find({ cryptos: req.params?.crypto });
             res.send(profiles);
         } catch(e) {
             console.error(e);
@@ -151,7 +151,7 @@ router.post("/",
             const profile:Profile = {
                 username: req.body.username,
                 user: req.body.user,
-                cryptos: req.body.crypto || [],
+                cryptos: req.body.cryptos || [],
                 following: req.body.following || [],
                 public: req.body.public || true,
                 bio: req.body.bio || "",

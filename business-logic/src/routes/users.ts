@@ -353,13 +353,13 @@ router.get("/fromCrypto/:crypto",
             });
         }
 
-        const profiles = await axios.get(process.env.DB_URL + "/profiles/crypto/" + req.params?.crypto, axiosConfig);
+        const profiles = await axios.get<Profile[]>(process.env.DB_URL + "/profiles/crypto/" + req.params?.crypto, axiosConfig);
 
         if (profiles.status !== 200) {
             return res.status(profiles.status).send(profiles.data);
         }
 
-        return res.send(profiles.data.map(filterPublicProfiles));
+        return res.send(profiles.data.filter((profile:Profile) => profile.public === true));
     }
 );
 
